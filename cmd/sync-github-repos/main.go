@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/Masterminds/semver/v3"
 	"log"
 	"os"
 	"slices"
@@ -125,7 +126,26 @@ func populateLatestReleases(ctx context.Context, cl *github.Client, repos RepoAr
 			must(err, "listing releases")
 
 			if len(releases) == 0 {
-				// No stable or pre-release found
+				// Couldn't find a release, let's just take the last tag
+				tags, _, err := cl.Repositories.ListTags(ctx, r.Owner, r.Name, nil)
+				must(err, "listing tags")
+
+				// The first tag in the list is the latest
+				if len(tags) > 0 {
+					latestTag := tags[0].GetName()
+
+					version, err := semver.NewVersion(latestTag)
+					if err != nil {
+						log.Printf("failed to parse tag with version %q: %v", latestTag, err)
+						continue
+					}
+
+					r.LatestTag = version.String()
+					alpha := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
+					v0 := version.Major() == 0
+					r.AlphaRelease = alpha || v0
+				}
+				// TODO: Maybe change this in the same way gitversion dertermines versions; setting v0.0.0 with on tag
 				continue
 			}
 
