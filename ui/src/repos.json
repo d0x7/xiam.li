@@ -1,34 +1,10 @@
 [
   {
-    "owner": "ozansz",
-    "name": "gls",
-    "stars": 62,
-    "desc": "Minimal file manager with terminal UI #Go",
-    "go_package": "gls",
-    "latest_tag": "v1.4.2",
-    "alpha_release": false,
-    "has_cli_app": true,
-    "packages": null,
-    "master_branch": "main"
-  },
-  {
-    "owner": "ozansz",
-    "name": "go.sazak.io",
-    "stars": 4,
-    "desc": "My custom Go package index, go.sazak.io",
-    "go_package": "go-sazak-io",
-    "latest_tag": "v1.0.0",
-    "alpha_release": false,
-    "has_cli_app": false,
-    "packages": null,
-    "master_branch": "main"
-  },
-  {
-    "owner": "ozansz",
-    "name": "intro-ebpf-with-go",
-    "stars": 4,
+    "owner": "d0x7",
+    "name": "go-embedfs-http",
+    "stars": 0,
     "desc": "",
-    "go_package": "intro-ebpf",
+    "go_package": "go-embedfs-http",
     "latest_tag": "",
     "alpha_release": false,
     "has_cli_app": false,
@@ -36,17 +12,63 @@
     "master_branch": "main"
   },
   {
-    "owner": "ozansz",
-    "name": "utils",
+    "owner": "d0x7",
+    "name": "go-interval-notation",
     "stars": 0,
-    "desc": "Small utility containers for testing and stuff. I put here the programs that I say \"I wish there was a container that does X\"",
-    "go_package": "utils",
-    "latest_tag": "v1.0-alpha",
-    "alpha_release": true,
+    "desc": "",
+    "go_package": "go-interval-notation",
+    "latest_tag": "",
+    "alpha_release": false,
     "has_cli_app": false,
-    "packages": {
-      "utils/request-forever": "ghcr.io/ozansz/utils/request-forever:v1.0-alpha"
-    },
+    "packages": null,
     "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "go-sabnzbd",
+    "stars": 0,
+    "desc": "somewhat maintained go-sabnzbd fork with fixed queue and history functions",
+    "go_package": "go-sabnzbd/v2",
+    "latest_tag": "",
+    "alpha_release": false,
+    "has_cli_app": false,
+    "packages": null,
+    "master_branch": "master"
+  },
+  {
+    "owner": "d0x7",
+    "name": "ghclone",
+    "stars": 0,
+    "desc": "",
+    "go_package": "ghclone",
+    "latest_tag": "v1.0.4",
+    "alpha_release": false,
+    "has_cli_app": true,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "gitversion",
+    "stars": 0,
+    "desc": "",
+    "go_package": "gitversion",
+    "latest_tag": "",
+    "alpha_release": false,
+    "has_cli_app": true,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "go-bunq",
+    "stars": 0,
+    "desc": "",
+    "go_package": "go-bunq",
+    "latest_tag": "",
+    "alpha_release": false,
+    "has_cli_app": false,
+    "packages": null,
+    "master_branch": "master"
   }
 ]
