@@ -1,6 +1,7 @@
 import "./globals.css";
 
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Toaster } from "@/components/ui/sonner"
 import { sharedLongDesc, sharedTitle } from "@/lib/constants";
 
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
         {children}
         <Toaster />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
