@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	authTokenEnv = "GITHUB_PUBLIC_REPO_READ_TOKEN"
-	cliAppTopic  = "cli"
+	authTokenEnv    = "GITHUB_PUBLIC_REPO_READ_TOKEN"
+	cliAppTopic     = "cli"
+	libraryAppTopic = "library"
 )
 
 var (
@@ -35,6 +36,7 @@ type Repo struct {
 	LatestTag    string            `json:"latest_tag"`
 	AlphaRelease bool              `json:"alpha_release"`
 	HasCLIApp    bool              `json:"has_cli_app"`
+	IsLibrary    bool              `json:"is_library"`
 	Packages     map[string]string `json:"packages"`
 	MasterBranch string            `json:"master_branch"`
 }
@@ -73,6 +75,7 @@ func main() {
 			Description:  repo.GetDescription(),
 			GoPackage:    pkg,
 			HasCLIApp:    repo.Topics != nil && slices.Contains(repo.Topics, cliAppTopic),
+			IsLibrary:    repo.Topics != nil && slices.Contains(repo.Topics, libraryAppTopic),
 			MasterBranch: repo.GetDefaultBranch(),
 		})
 	}

@@ -1,6 +1,32 @@
 [
   {
     "owner": "d0x7",
+    "name": "gitversion",
+    "stars": 0,
+    "desc": "",
+    "go_package": "gitversion",
+    "latest_tag": "",
+    "alpha_release": false,
+    "has_cli_app": true,
+    "is_library": false,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "meta",
+    "stars": 0,
+    "desc": "",
+    "go_package": "meta",
+    "latest_tag": "",
+    "alpha_release": false,
+    "has_cli_app": false,
+    "is_library": true,
+    "packages": null,
+    "master_branch": "master"
+  },
+  {
+    "owner": "d0x7",
     "name": "xiam.li",
     "stars": 0,
     "desc": "Xiam.Li Go Registry",
@@ -8,6 +34,7 @@
     "latest_tag": "",
     "alpha_release": false,
     "has_cli_app": false,
+    "is_library": false,
     "packages": null,
     "master_branch": "main"
   }
