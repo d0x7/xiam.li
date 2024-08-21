@@ -4,4 +4,4 @@ tasks:
   sync-repos:
     desc: Update the repositories
     cmds:
-      - go run cmd/sync-github-repos/main.go --username d0x7 --hostname xiam.li --out repos_xiamli.json
+      - go run cmd/sync-github-repos/main.go --username d0x7 --hostname xiam.li --out ui/src/repos.json
