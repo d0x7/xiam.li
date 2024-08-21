@@ -88,7 +88,7 @@ export default function Home() {
                 {repo.is_library && <div>
                   <Label className="text-xs">Get Go Package</Label>
                   <div className="flex flex-row items-center justify-between rounded-md border p-2 mt-2 mb-4 text-sm text-muted-foreground">
-                    <span className="overflow-auto px-2 py-2 whitespace-nowrap">{`go get xiam.li/${repo.go_package}/cmd/${repo.go_package}@latest`}</span>
+                    <span className="overflow-auto px-2 py-2 whitespace-nowrap">{`go get xiam.li/${repo.go_package}`}</span>
                     <Button
                         variant="outline" className="px-2"
                         onClick={() => {
