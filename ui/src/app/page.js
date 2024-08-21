@@ -56,7 +56,7 @@ export default function Home() {
             <Card key={index} className="w-[350px] m-4 flex flex-col justify-between smallscr:w-full smallscr:min-w-[316px] smallscr:my-2 smallscr:mx-0">
               <CardHeader>
                 <CardTitle className="flex flex-row justify-between mb-2">
-                  <Link href={"/" + repo.go_package} className="hover:underline">{repo.owner}/{repo.name}</Link>
+                  <Link href={`https://github.com/${repo.owner}/${repo.name}/`} className="hover:underline">{repo.owner}/{repo.name}</Link>
                   {repo.latest_tag.length > 0 && <Badge
                       variant="outline" className={cn("bg-opacity-10", repo.alpha_release ? "bg-red-500" : "bg-sky-500")}>
                     <div className="flex flex-row align-center text-muted-foreground">
