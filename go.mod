@@ -1,4 +1,4 @@
-module go.sazak.io/go-sazak-io
+module xiam.li/xiam-li
 
 go 1.21.6
 

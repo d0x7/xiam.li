@@ -2,7 +2,7 @@ import "./globals.css";
 
 import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from "@/components/ui/sonner"
-import { sharedLongDesc, sharedTitle, twitterHandle } from "@/lib/constants";
+import { sharedLongDesc, sharedTitle } from "@/lib/constants";
 
 export default function RootLayout({ children }) {
   return (
@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
 
 
 export const metadata = {
-  metadataBase: new URL('https://go.sazak.io'),
+  metadataBase: new URL('https://xiam.li'),
   title: sharedTitle,
   description: sharedLongDesc,
   robots: {
@@ -38,12 +38,7 @@ export const metadata = {
   alternates: {
     canonical: '/'
   },
-  twitter: {
-    card: 'summary_large_image',
-    site: twitterHandle,
-    creator: twitterHandle,
-  },
   other: {
     pinterest: 'nopin'
   }
-}
+  }

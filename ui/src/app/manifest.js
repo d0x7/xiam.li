@@ -1,8 +1,8 @@
 export default function manifest() {
     return {
-      name: 'go.sazak.io',
-      short_name: 'go.sazak.io',
-      description: "Sazak's Go Package Index",
+      name: 'xiam.li',
+      short_name: 'xiam.li',
+      description: "Xiam.Li Go Package Index",
       start_url: '/',
       display: 'standalone',
       background_color: '#0c0a09',

@@ -1,1 +1,1 @@
-My custom Go package index, go.sazak.io - Proudly powered by Go and Next.js
+Xiam.Li Go Package Index - Proudly powered by Go and Next.js

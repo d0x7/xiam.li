@@ -48,8 +48,8 @@ export default function Home() {
     <div className="flex flex-col justify-between h-full w-[80%] mx-[10%]">
       <div>
         <div className="flex flex-col mx-4 mt-16 mb-12 smallscr:mx-0 smallscr:mt-8 smallscr:mb-6">
-          <h1 className="text-3xl">go.sazak.io</h1>
-          <h2 className="text-sm mt-1 text-muted-foreground">Sazak's Go Package Index</h2>
+          <h1 className="text-3xl">xiam.li</h1>
+          <h2 className="text-sm mt-1 text-muted-foreground">Xiam.Li Go Package Index</h2>
         </div>
         <div className="flex flex-row flex-wrap justify-start align-center smallscr:flex-col smallscr:items-center">
           {repos.map((repo, index) => (
@@ -57,12 +57,13 @@ export default function Home() {
               <CardHeader>
                 <CardTitle className="flex flex-row justify-between mb-2">
                   <Link href={"/" + repo.go_package} className="hover:underline">{repo.owner}/{repo.name}</Link>
-                  <Badge variant="outline" className={cn("bg-opacity-10", repo.alpha_release ? "bg-red-500" : "bg-sky-500")}>
+                  {repo.latest_tag.length > 0 && <Badge
+                      variant="outline" className={cn("bg-opacity-10", repo.alpha_release ? "bg-red-500" : "bg-sky-500")}>
                     <div className="flex flex-row align-center text-muted-foreground">
                       <span className={cn("flex h-2 w-2 mr-2 translate-y-1 rounded-full", repo.alpha_release ? "bg-red-500" : "bg-sky-500")} />
                       <span>{repo.latest_tag}</span>
                     </div>
-                  </Badge>
+                  </Badge>}
                 </CardTitle>
                 <CardDescription>{repo.desc}</CardDescription>
               </CardHeader>
@@ -70,11 +71,11 @@ export default function Home() {
                 {repo.has_cli_app && <div>
                   <Label className="text-xs">Install CLI App</Label>
                   <div className="flex flex-row items-center justify-between rounded-md border p-2 mt-2 mb-4 text-sm text-muted-foreground">
-                    <span className="overflow-auto px-2 py-2 whitespace-nowrap">{`go install go.sazak.io/${repo.go_package}/cmd/${repo.go_package}@latest`}</span>
+                    <span className="overflow-auto px-2 py-2 whitespace-nowrap">{`go install xiam.li/${repo.go_package}/cmd/${repo.go_package}@latest`}</span>
                     <Button
                       variant="outline" className="px-2"
                       onClick={() => {
-                        navigator.clipboard.writeText(`go install go.sazak.io/${repo.go_package}/cmd/${repo.go_package}@latest`)
+                        navigator.clipboard.writeText(`go install xiam.li/${repo.go_package}/cmd/${repo.go_package}@latest`)
                         toast("Copied to clipboard", {
                           description: "Run `go install` in terminal to install the " + repo.name + " CLI app."
                         })
@@ -135,7 +136,7 @@ export default function Home() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Link href={`https://pkg.go.dev/go.sazak.io/${repo.go_package}`} target="_blank" rel="noreferrer">
+                <Link href={`https://pkg.go.dev/xiam.li/${repo.go_package}`} target="_blank" rel="noreferrer">
                   <Button variant="outline">
                     <span className="mr-2 font-light text-xs">pkg.go.dev</span>
                     <ArrowUpRightIcon size={16} />
@@ -161,11 +162,11 @@ export default function Home() {
         </div>
         <Separator orientation="vertical" className="mx-5"/>
         <Link
-          href="https://github.com/ozansz/go.sazak.io"
+          href="https://github.com/d0x7/xiam.li"
           target="_blank" rel="noreferrer"
           className="flex flex-row align-center items-center hover:text-white hover:underline"
         >
-          <span className="mr-3">ozansz/go.sazak.io</span>
+          <span className="mr-3">d0x7/xiam.li</span>
           <ArrowUpRightIcon size={20} />
         </Link>
       </div>

@@ -4,6 +4,6 @@ export default function robots() {
             userAgent: '*',
             allow: '/',
         },
-        sitemap: 'https://go.sazak.io/sitemap.xml',
+        sitemap: 'https://xiam.li/sitemap.xml',
     }
 }

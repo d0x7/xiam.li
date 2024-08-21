@@ -1,6 +1,8 @@
-# go.sazak.io
+# xiam.li
 
-go.sazak.io is my personal Go package index, for Go packages with name `go.sazak.io/...`.
+xiam.li is XiamLi' Go Package Index, for Go packages with name `xiam.li/...`.
+
+This is a fork from Ozan Sazak' [go.sazak.io](https://github.com/ozansz/go.sazak.io) project.
 
 This repo provides the source code for the frontend and the backend of the package index.
 
@@ -16,10 +18,14 @@ This project is licensed under the terms of the GNU General Public License v3.0.
 
 ### Running the backend
 
+You need a Personal Access Token (a classic old one, the fine grained ones do not work!) with the following permissions:
+- repo:public_repo
+- read:packages
+
 ```sh
 export GITHUB_PUBLIC_REPO_READ_TOKEN="your-github-personal-access-token"
 
-go run cmd/sync-github-repos/main.go --username ozansz --hostname go.sazak.io --out ui/src/repos.json
+go run cmd/sync-github-repos/main.go --username d0x7 --hostname xiam.li --out ui/src/repos.json
 ```
 
 ### Running the frontend
@@ -33,7 +39,7 @@ npm run dev
 
 ### How to add a new package/update package info after new release?
 
-The `sync-github-repos` command will collect the packages from the **public** GitHub repositories of the user, which have a `go.mod` file that starts with `module go.sazak.io/`, and write them to a JSON file. The frontend will read this JSON file and display the packages.
+The `sync-github-repos` command will collect the packages from the **public** GitHub repositories of the user, which have a `go.mod` file that starts with `module xiam.li/`, and write them to a JSON file. The frontend will read this JSON file and display the packages.
 
 To update the information on the website, you need to rebuild the compiled JSON file. As this project is using Vercel, you only need to commit the new JSON file to the `main` branch.
 
@@ -45,9 +51,9 @@ git commit --allow-empty -m "release"
 
 After Vercel finishes the new deployment, the website will be updated with the new information.
 
-Now you will need to update the latest version information on `pkg.go.dev`. You can do this by requesting the new version in the website by navigating to `https://pkg.go.dev/go.sazak.io/<package>@<version>`.
+Now you will need to update the latest version information on `pkg.go.dev`. You can do this by requesting the new version in the website by navigating to `https://pkg.go.dev/xiam.li/<package>@<version>`.
 
-> One other way to update the information on `pkg.go.dev` is to run `go get` with Go proxy specified, for example: `GOPROXY=https://proxy.golang.org GO111MODULE=on go get go.sazak.io/gls@v1.4.2`. This did not work for me all the time though.
+> One other way to update the information on `pkg.go.dev` is to run `go get` with Go proxy specified, for example: `GOPROXY=https://proxy.golang.org GO111MODULE=on go get xiam.li/gls@v1.4.2`. This did not work for me all the time though.
 
 #### Important points
 
@@ -60,7 +66,7 @@ Now you will need to update the latest version information on `pkg.go.dev`. You 
 
 set -eo pipefail
 
-go run cmd/sync-github-repos/main.go --username ozansz --hostname go.sazak.io --out ui/src/repos.json --force-authenticated
+go run cmd/sync-github-repos/main.go --username xiamli --hostname xiam.li --out ui/src/repos.json --force-authenticated
 if [ $? -ne 0 ]; then
     echo "Pre-commit hook failed (content generation script)"
     exit 1
