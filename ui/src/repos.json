@@ -1,19 +1,6 @@
 [
   {
     "owner": "d0x7",
-    "name": "meta",
-    "stars": 0,
-    "desc": "",
-    "go_package": "meta",
-    "latest_tag": "0.2.0",
-    "alpha_release": true,
-    "has_cli_app": false,
-    "is_library": true,
-    "packages": null,
-    "master_branch": "master"
-  },
-  {
-    "owner": "d0x7",
     "name": "xiam.li",
     "stars": 0,
     "desc": "Xiam.Li Go Registry",
@@ -50,5 +37,44 @@
     "is_library": false,
     "packages": null,
     "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "go-interval-notation",
+    "stars": 0,
+    "desc": "Go library to parse interval notations, e.g. [v1.2,] or [v1,v3)",
+    "go_package": "interval-notation",
+    "latest_tag": "1.0.0",
+    "alpha_release": false,
+    "has_cli_app": false,
+    "is_library": true,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "go-sabnzbd",
+    "stars": 0,
+    "desc": "somewhat maintained go-sabnzbd fork with fixed queue and history functions",
+    "go_package": "go-sabnzbd",
+    "latest_tag": "2.3.0",
+    "alpha_release": false,
+    "has_cli_app": false,
+    "is_library": true,
+    "packages": null,
+    "master_branch": "master"
+  },
+  {
+    "owner": "d0x7",
+    "name": "meta",
+    "stars": 0,
+    "desc": "",
+    "go_package": "meta",
+    "latest_tag": "0.2.0",
+    "alpha_release": true,
+    "has_cli_app": false,
+    "is_library": true,
+    "packages": null,
+    "master_branch": "master"
   }
 ]
