@@ -76,5 +76,19 @@
     "is_library": true,
     "packages": null,
     "master_branch": "master"
+  },
+  {
+    "owner": "d0x7",
+    "name": "protoc-gen-go-nats",
+    "stars": 0,
+    "desc": "",
+    "go_package": "go-nats",
+    "go_install": "xiam.li/go-nats/cmd/protoc-gen-go-nats@latest",
+    "latest_tag": "v0.1.0",
+    "alpha_release": true,
+    "has_cli_app": true,
+    "is_library": false,
+    "packages": null,
+    "master_branch": "main"
   }
 ]
