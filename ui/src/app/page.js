@@ -24,6 +24,13 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectI
 import { useState } from "react"
 
 export default function Home() {
+  // Add go_install field to repos
+  repos.forEach(repo => {
+    if (!repo.go_install) {
+      repo.go_install = `xiam.li/${repo.go_package}/cmd/${repo.go_package}@latest`
+    }
+  })
+
   // Order by latest tag, alpha release, and stars
   repos.sort((a, b) => a.latest_tag > b.latest_tag ? 1 : -1)
   repos.sort((a, b) => b.alpha_release ? -1 : 1)
@@ -71,11 +78,11 @@ export default function Home() {
                 {repo.has_cli_app && <div>
                   <Label className="text-xs">Install CLI App</Label>
                   <div className="flex flex-row items-center justify-between rounded-md border p-2 mt-2 mb-4 text-sm text-muted-foreground">
-                    <span className="overflow-auto px-2 py-2 whitespace-nowrap">{`go install xiam.li/${repo.go_package}/cmd/${repo.go_package}@latest`}</span>
+                    <span className="overflow-auto px-2 py-2 whitespace-nowrap">{`go install ${repo.go_install}`}</span>
                     <Button
                       variant="outline" className="px-2"
                       onClick={() => {
-                        navigator.clipboard.writeText(`go install xiam.li/${repo.go_package}/cmd/${repo.go_package}@latest`)
+                        navigator.clipboard.writeText(`go install ${repo.go_install}`)
                         toast("Copied to clipboard", {
                           description: "Run `go install` in terminal to install the " + repo.name + " CLI app."
                         })
