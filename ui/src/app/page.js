@@ -32,6 +32,7 @@ export default function Home() {
   })
 
   // Order by latest tag, alpha release, and stars
+  repos.sort((a, b) => b.go_package > a.go_package ? -1 : 1)
   repos.sort((a, b) => a.latest_tag > b.latest_tag ? 1 : -1)
   repos.sort((a, b) => b.alpha_release ? -1 : 1)
   repos.sort((a, b) => b.stars - a.stars)
