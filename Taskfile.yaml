@@ -3,16 +3,17 @@ version: 3
 tasks:
   sync:
     desc: Update the repositories
-    cmds:
-      - go run cmd/sync-github-repos/main.go --username d0x7 --hostname xiam.li --out ui/src/repos.json
+    cmd: go run cmd/sync-github-repos/main.go --username d0x7 --hostname xiam.li --out ui/src/repos.json
   run:
     desc: Run the application in dev mode
     dir: ui
-    cmds:
-      - npm run dev
+    cmd: npm run dev
   build:
     desc: Build and run the application
     dir: ui
     cmds:
       - npm run build
       - npx serve@latest out
+  deploy:
+    desc: Deploy the application to Vercel
+    cmd: vercel --force --prod
