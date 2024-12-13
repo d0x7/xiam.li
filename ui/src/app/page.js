@@ -83,9 +83,14 @@ export default function Home() {
                     <Button
                       variant="outline" className="px-2"
                       onClick={() => {
-                        navigator.clipboard.writeText(`go install ${repo.go_install}`)
-                        toast("Copied to clipboard", {
-                          description: "Run `go install` in terminal to install the " + repo.name + " CLI app."
+                        let installCmd = `go install ${repo.go_install}`
+                        navigator.clipboard.writeText(installCmd).catch(err => {
+                          console.error(err)
+                          toast("Failed to copy to clipboard", {description: "Please manually copy and enter '" + installCmd + "'."})
+                        }).then(() => {
+                          toast("Copied to clipboard", {
+                            description: "Run `go install` in terminal to install the " + repo.name + " CLI app."
+                          })
                         })
                       }}
                     >
@@ -100,9 +105,14 @@ export default function Home() {
                     <Button
                         variant="outline" className="px-2"
                         onClick={() => {
-                          navigator.clipboard.writeText(`go get xiam.li/${repo.go_package}`)
-                          toast("Copied to clipboard", {
-                            description: "Run `go get` in terminal to add this package to your project."
+                          let getCmd = `go get xiam.li/${repo.go_package}`
+                          navigator.clipboard.writeText(getCmd).catch(err => {
+                            console.error(err)
+                            toast("Failed to copy to clipboard", {description: "Please manually copy and enter '" + getCmd + "'."})
+                          }).then(() => {
+                            toast("Copied to clipboard", {
+                              description: "Run `go get` in terminal to add this package to your project."
+                            })
                           })
                         }}
                     >
