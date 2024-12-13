@@ -64,12 +64,12 @@ export default function Home() {
             <Card key={index} className="w-[350px] m-4 flex flex-col justify-between smallscr:w-full smallscr:min-w-[316px] smallscr:my-2 smallscr:mx-0">
               <CardHeader>
                 <CardTitle className="flex flex-row justify-between mb-2">
-                  <Link href={`https://github.com/${repo.owner}/${repo.name}/`} className="hover:underline">{repo.owner}/{repo.name}</Link>
-                  {repo.latest_tag.length > 0 && <Badge
+                  <Link href={`https://github.com/${repo.owner}/${repo.name}/`} className="hover:underline">{repo.name}</Link>
+                  {repo.latest_tag && repo.latest_tag.length > 0 && <Badge
                       variant="outline" className={cn("bg-opacity-10", repo.alpha_release ? "bg-red-500" : "bg-sky-500")}>
                     <div className="flex flex-row align-center text-muted-foreground">
                       <span className={cn("flex h-2 w-2 mr-2 translate-y-1 rounded-full", repo.alpha_release ? "bg-red-500" : "bg-sky-500")} />
-                      <span>{repo.latest_tag}</span>
+                      <span>v{repo.latest_tag}</span>
                     </div>
                   </Badge>}
                 </CardTitle>

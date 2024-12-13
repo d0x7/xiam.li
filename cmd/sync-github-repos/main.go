@@ -230,6 +230,7 @@ func populateLatestReleases(ctx context.Context, cl *github.Client, repos RepoAr
 			} else {
 				// Neither release nor tags are available
 				log.Printf("no release or tags found for %s/%s", repo.Owner, repo.Name)
+				repo.AlphaRelease = true
 			}
 		}(entry)
 	}
