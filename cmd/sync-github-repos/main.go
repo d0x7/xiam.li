@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/Masterminds/semver/v3"
@@ -11,6 +12,8 @@ import (
 	"os"
 	"slices"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/google/go-github/v60/github"
 )
@@ -34,6 +37,7 @@ type Repo struct {
 	Stars        uint              `json:"stars"`
 	Description  string            `json:"desc"`
 	GoPackage    string            `json:"go_package"`
+	GoInstall    string            `json:"go_install"`
 	LatestTag    string            `json:"latest_tag"`
 	AlphaRelease bool              `json:"alpha_release"`
 	HasCLIApp    bool              `json:"has_cli_app"`
@@ -47,6 +51,7 @@ type RepoArchive []*Repo
 func main() {
 	log.SetPrefix("sync-github-repos: ")
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	start := time.Now()
 
 	flag.Parse()
 	validateFlags()
@@ -87,6 +92,8 @@ func main() {
 	b, err := json.MarshalIndent(repoArchive, "", "  ")
 	must(err, "marshaling JSON")
 	must(os.WriteFile(*outPath, b, 0644), "writing JSON to file")
+
+	log.Printf("Done in %v", time.Since(start))
 }
 
 func populatePackages(ctx context.Context, cl *github.Client, user string, repos RepoArchive) {
@@ -118,107 +125,121 @@ func populatePackages(ctx context.Context, cl *github.Client, user string, repos
 }
 
 func populateLatestReleases(ctx context.Context, cl *github.Client, repos RepoArchive) {
-	for _, r := range repos {
-		release, resp, err := cl.Repositories.GetLatestRelease(ctx, r.Owner, r.Name)
-		if resp.StatusCode == 404 {
-			// This repo may have one pre-release
-			releases, _, err := cl.Repositories.ListReleases(ctx, r.Owner, r.Name, nil)
-			must(err, "listing releases")
+	wg := sync.WaitGroup{}
+	for _, entry := range repos {
+		wg.Add(1)
+		go func(repo *Repo) {
+			defer wg.Done()
 
-			if len(releases) == 0 {
-				// Couldn't find a release, let's just take the last tag
-				tags, _, err := cl.Repositories.ListTags(ctx, r.Owner, r.Name, nil)
-				must(err, "listing tags")
+			release, resp, err := cl.Repositories.GetLatestRelease(ctx, repo.Owner, repo.Name)
+			if resp.StatusCode == 404 {
+				// This repo may have one pre-release
+				releases, _, err := cl.Repositories.ListReleases(ctx, repo.Owner, repo.Name, nil)
+				must(err, "listing releases")
 
-				// The first tag in the list is the latest
-				if len(tags) > 0 {
-					latestTag := tags[0].GetName()
+				if len(releases) == 0 {
+					// Couldn't find a release, let's just take the last tag
+					tags, _, err := cl.Repositories.ListTags(ctx, repo.Owner, repo.Name, nil)
+					must(err, "listing tags")
 
-					version, err := semver.NewVersion(latestTag)
-					if err != nil {
-						log.Printf("failed to parse tag with version %q: %v", latestTag, err)
-						continue
+					// The first tag in the list is the latest
+					if len(tags) > 0 {
+						latestTag := tags[0].GetName()
+
+						version, err := semver.NewVersion(latestTag)
+						if err != nil {
+							log.Printf("failed to parse tag with version %q: %v", latestTag, err)
+							return
+						}
+
+						repo.LatestTag = version.String()
+						alpha := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
+						v0 := version.Major() == 0
+						repo.AlphaRelease = alpha || v0
 					}
-
-					r.LatestTag = version.String()
-					alpha := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
-					v0 := version.Major() == 0
-					r.AlphaRelease = alpha || v0
+					// TODO: Maybe change this in the same way gitversion dertermines versions; setting v0.0.0 with on tag
+					return
 				}
-				// TODO: Maybe change this in the same way gitversion dertermines versions; setting v0.0.0 with on tag
-				continue
+
+				latest := releases[0]
+				for _, rel := range releases {
+					if rel.GetCreatedAt().After(latest.GetCreatedAt().Time) {
+						latest = rel
+					}
+				}
+
+				release = latest
+			} else {
+				must(err, "getting latest release")
 			}
 
-			latest := releases[0]
-			for _, rel := range releases {
-				if rel.GetCreatedAt().After(latest.GetCreatedAt().Time) {
-					latest = rel
-				}
+			if release != nil {
+				repo.LatestTag = release.GetTagName()
+
+				pre := release.GetPrerelease()
+				v0 := strings.HasPrefix(repo.LatestTag, "v0.")
+				repo.AlphaRelease = pre || v0
 			}
-
-			release = latest
-		} else {
-			must(err, "getting latest release")
-		}
-
-		if release != nil {
-			r.LatestTag = release.GetTagName()
-
-			pre := release.GetPrerelease()
-			v0 := strings.HasPrefix(r.LatestTag, "v0.")
-			r.AlphaRelease = pre || v0
-		}
+		}(entry)
 	}
+	wg.Wait()
 }
 
 func filterGoRepositories(ctx context.Context, cl *github.Client, hostname string, repos []*github.Repository) map[string]*github.Repository {
+	mutex := sync.Mutex{}
 	goRepos := map[string]*github.Repository{}
 
 	prefix := fmt.Sprintf("module %s", hostname)
 
-	for _, repo := range repos {
-		log.Println("Checking", repo.GetFullName(), "for go.mod file")
+	wg := sync.WaitGroup{}
+	for _, entry := range repos {
+		wg.Add(1)
+		go func(repo *github.Repository) {
+			defer wg.Done()
 
-		content, _, _, err := cl.Repositories.GetContents(ctx, repo.GetOwner().GetLogin(), repo.GetName(), "go.mod", nil)
-		if resp, ok := err.(*github.ErrorResponse); ok {
-			if resp.Response.StatusCode == 404 {
-				continue
+			content, _, _, err := cl.Repositories.GetContents(ctx, repo.GetOwner().GetLogin(), repo.GetName(), "go.mod", nil)
+			var resp *github.ErrorResponse
+			if errors.As(err, &resp) {
+				if resp.Response.StatusCode == 404 {
+					return
+				}
 			}
-		}
-		must(err, "getting go.mod file")
-		if content == nil {
-			continue
-		}
-		if content.Content == nil {
-			log.Printf("empty go.mod file found in %s/%s", repo.GetOwner().GetLogin(), repo.GetName())
-			continue
-		}
-		contentBytes, err := base64.StdEncoding.DecodeString(*content.Content)
-		must(err, "decoding go.mod file")
-
-		contentStr := strings.TrimSpace(string(contentBytes))
-
-		log.Printf("go.mod file in %s/%s: %s", repo.GetOwner().GetLogin(), repo.GetName(), contentStr)
-
-		if strings.HasPrefix(string(contentStr), prefix) {
-			goPkg := strings.Split(contentStr, "\n")[0][7:]
-			goPkg = strings.TrimPrefix(goPkg, hostname+"/")
-
-			if _, ok := goRepos[goPkg]; ok {
-				log.Fatal("duplicate go package found:", goPkg)
+			must(err, "getting go.mod file")
+			if content == nil {
+				return
 			}
+			if content.Content == nil {
+				return
+			}
+			contentBytes, err := base64.StdEncoding.DecodeString(*content.Content)
+			must(err, "decoding go.mod file")
 
-			log.Printf("go.mod file in %s/%s has prefix %s, and Go package is: %s", repo.GetOwner().GetLogin(), repo.GetName(), prefix, goPkg)
-			goRepos[goPkg] = repo
-		}
+			contentStr := strings.TrimSpace(string(contentBytes))
+
+			if strings.HasPrefix(contentStr, prefix) {
+				goPkg := strings.Split(contentStr, "\n")[0][7:]
+				goPkg = strings.TrimPrefix(goPkg, hostname+"/")
+
+				mutex.Lock()
+				defer mutex.Unlock()
+
+				if _, ok := goRepos[goPkg]; ok {
+					log.Fatal("duplicate go package found:", goPkg)
+				}
+
+				log.Printf("go.mod file in %s/%s has prefix %s, and Go package is: %s", repo.GetOwner().GetLogin(), repo.GetName(), prefix, goPkg)
+				goRepos[goPkg] = repo
+			}
+		}(entry)
 	}
+	wg.Wait()
 	return goRepos
 }
 
 func listRepos(ctx context.Context, cl *github.Client, user string) []*github.Repository {
 	var allRepos []*github.Repository
 	opt := &github.RepositoryListByUserOptions{
-		ListOptions: github.ListOptions{PerPage: 10},
+		ListOptions: github.ListOptions{PerPage: 100},
 	}
 	for {
 		repos, resp, err := cl.Repositories.ListByUser(ctx, user, opt)
@@ -245,10 +266,12 @@ func must(err error, msg string) {
 	if err == nil {
 		return
 	}
-	if _, ok := err.(*github.RateLimitError); ok {
+	var rateLimitError *github.RateLimitError
+	if errors.As(err, &rateLimitError) {
 		err = fmt.Errorf("rate limited: %v", err)
 	}
-	if _, ok := err.(*github.AbuseRateLimitError); ok {
+	var abuseRateLimitError *github.AbuseRateLimitError
+	if errors.As(err, &abuseRateLimitError) {
 		err = fmt.Errorf("abuse rate limited: %v", err)
 	}
 	log.Fatalf("%s: %v", msg, err)
