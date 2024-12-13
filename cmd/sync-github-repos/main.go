@@ -35,10 +35,10 @@ type Repo struct {
 	Owner        string            `json:"owner"`
 	Name         string            `json:"name"`
 	Stars        uint              `json:"stars"`
-	Description  string            `json:"desc"`
-	GoPackage    string            `json:"go_package"`
-	GoInstall    string            `json:"go_install"`
-	LatestTag    string            `json:"latest_tag"`
+	Description  string            `json:"desc,omitempty"`
+	GoPackage    string            `json:"go_package,omitempty"`
+	GoInstall    string            `json:"go_install,omitempty"`
+	LatestTag    string            `json:"latest_tag,omitempty"`
 	AlphaRelease bool              `json:"alpha_release"`
 	HasCLIApp    bool              `json:"has_cli_app"`
 	IsLibrary    bool              `json:"is_library"`
@@ -89,7 +89,45 @@ func main() {
 	populateLatestReleases(ctx, cl, repoArchive)
 	populatePackages(ctx, cl, *username, repoArchive)
 
-	b, err := json.MarshalIndent(repoArchive, "", "  ")
+	// Sort by name so that the
+	slices.SortFunc(repoArchive, func(a, b *Repo) int {
+		return strings.Compare(a.GoPackage, b.GoPackage)
+	})
+
+	// Read the previous file to merge certain fields, e.g. go_install
+	file, err := os.ReadFile(*outPath)
+	var previousRepos RepoArchive
+	if err = json.Unmarshal(file, &previousRepos); err != nil {
+		log.Fatalf("Failed to unmarshal %s: %v", *outPath, err)
+	}
+
+	var finalRepos RepoArchive
+	for _, repo := range repoArchive {
+		var prevRepo *Repo
+		for _, prev := range previousRepos {
+			if repo.Name != prev.Name || repo.Owner != prev.Owner {
+				continue
+			}
+			prevRepo = prev
+			break
+		}
+		if prevRepo == nil {
+			finalRepos = append(finalRepos, repo)
+		} else {
+			prevRepo.Stars = repo.Stars
+			prevRepo.Description = repo.Description
+			prevRepo.GoPackage = repo.GoPackage
+			prevRepo.LatestTag = repo.LatestTag
+			prevRepo.AlphaRelease = repo.AlphaRelease
+			prevRepo.HasCLIApp = repo.HasCLIApp
+			prevRepo.IsLibrary = repo.IsLibrary
+			prevRepo.Packages = repo.Packages
+			prevRepo.MasterBranch = repo.MasterBranch
+			finalRepos = append(finalRepos, prevRepo)
+		}
+	}
+
+	b, err := json.MarshalIndent(finalRepos, "", "  ")
 	must(err, "marshaling JSON")
 	must(os.WriteFile(*outPath, b, 0644), "writing JSON to file")
 
