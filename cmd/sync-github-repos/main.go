@@ -126,59 +126,72 @@ func populatePackages(ctx context.Context, cl *github.Client, user string, repos
 
 func populateLatestReleases(ctx context.Context, cl *github.Client, repos RepoArchive) {
 	wg := sync.WaitGroup{}
+	log.Printf("Fetching latest release and tags for %d repositories", len(repos))
 	for _, entry := range repos {
 		wg.Add(1)
 		go func(repo *Repo) {
 			defer wg.Done()
 
-			release, resp, err := cl.Repositories.GetLatestRelease(ctx, repo.Owner, repo.Name)
-			if resp.StatusCode == 404 {
-				// This repo may have one pre-release
-				releases, _, err := cl.Repositories.ListReleases(ctx, repo.Owner, repo.Name, nil)
-				must(err, "listing releases")
+			release, _, _ := cl.Repositories.GetLatestRelease(ctx, repo.Owner, repo.Name)
+			tags, _, _ := cl.Repositories.ListTags(ctx, repo.Owner, repo.Name, nil)
 
-				if len(releases) == 0 {
-					// Couldn't find a release, let's just take the last tag
-					tags, _, err := cl.Repositories.ListTags(ctx, repo.Owner, repo.Name, nil)
-					must(err, "listing tags")
-
-					// The first tag in the list is the latest
-					if len(tags) > 0 {
-						latestTag := tags[0].GetName()
-
-						version, err := semver.NewVersion(latestTag)
-						if err != nil {
-							log.Printf("failed to parse tag with version %q: %v", latestTag, err)
-							return
-						}
-
-						repo.LatestTag = version.String()
-						alpha := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
-						v0 := version.Major() == 0
-						repo.AlphaRelease = alpha || v0
-					}
-					// TODO: Maybe change this in the same way gitversion dertermines versions; setting v0.0.0 with on tag
+			if release == nil && len(tags) > 0 {
+				// No release but tags are available, use the latest tag
+				latestTag := tags[0].GetName()
+				version, err := semver.NewVersion(latestTag)
+				if err != nil {
+					log.Printf("failed to parse tag with version %q: %v", latestTag, err)
 					return
 				}
-
-				latest := releases[0]
-				for _, rel := range releases {
-					if rel.GetCreatedAt().After(latest.GetCreatedAt().Time) {
-						latest = rel
-					}
+				repo.LatestTag = version.String()
+				alpha := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
+				repo.AlphaRelease = alpha || version.Major() == 0
+				log.Printf("using latest tag %s for %s/%s as no release is available", repo.LatestTag, repo.Owner, repo.Name)
+			} else if release != nil && len(tags) > 0 {
+				// Both release and tags are available, compare dates
+				latestTag := tags[0].GetName()
+				tagCommit, _, err := cl.Repositories.GetCommit(ctx, repo.Owner, repo.Name, tags[0].GetCommit().GetSHA(), nil)
+				if err != nil {
+					log.Printf("failed to get commit for tag %q: %v", latestTag, err)
+					return
 				}
-
-				release = latest
+				//log.Printf("latest tag for %s/%s is %s, date: %v", repo.Owner, repo.Name, latestTag, tagCommit.GetCommit().GetCommitter().GetDate())
+				//log.Printf("latest release for %s/%s is %s, date: %v", repo.Owner, repo.Name, release.GetTagName(), release.GetPublishedAt().Time)
+				if release.GetPublishedAt().Time.After(tagCommit.GetCommit().GetCommitter().GetDate().Time) {
+					version, err := semver.NewVersion(release.GetTagName())
+					if err != nil {
+						log.Printf("failed to parse tag with version %q: %v", release.GetTagName(), err)
+						return
+					}
+					repo.LatestTag = version.String()
+					pre := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
+					repo.AlphaRelease = pre || version.Major() == 0
+					log.Printf("using latest release %s for %s/%s as release newer than tag", repo.LatestTag, repo.Owner, repo.Name)
+				} else {
+					version, err := semver.NewVersion(latestTag)
+					if err != nil {
+						log.Printf("failed to parse tag with version %q: %v", latestTag, err)
+						return
+					}
+					repo.LatestTag = version.String()
+					alpha := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
+					repo.AlphaRelease = alpha || version.Major() == 0
+					log.Printf("using latest tag %s for %s/%s as tag newer than release", repo.LatestTag, repo.Owner, repo.Name)
+				}
+			} else if release != nil {
+				// Only release is available - if done correct, there shouldn't be a release without tags, but it's possible.
+				version, err := semver.NewVersion(release.GetTagName())
+				if err != nil {
+					log.Printf("failed to parse tag with version %q: %v", release.GetTagName(), err)
+					return
+				}
+				repo.LatestTag = version.String()
+				pre := version.Prerelease() != "" && strings.Contains(version.Prerelease(), "alpha")
+				repo.AlphaRelease = pre || version.Major() == 0
+				log.Printf("using latest release %s for %s/%s as no tags available", repo.LatestTag, repo.Owner, repo.Name)
 			} else {
-				must(err, "getting latest release")
-			}
-
-			if release != nil {
-				repo.LatestTag = release.GetTagName()
-
-				pre := release.GetPrerelease()
-				v0 := strings.HasPrefix(repo.LatestTag, "v0.")
-				repo.AlphaRelease = pre || v0
+				// Neither release nor tags are available
+				log.Printf("no release or tags found for %s/%s", repo.Owner, repo.Name)
 			}
 		}(entry)
 	}
