@@ -14,6 +14,18 @@
   },
   {
     "owner": "d0x7",
+    "name": "go-gelf",
+    "stars": 1,
+    "desc": "Go library to send logs to Graylog as GELF via TCP, UDP and HTTP",
+    "go_package": "gelf",
+    "alpha_release": true,
+    "has_cli_app": false,
+    "is_library": true,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
     "name": "ghclone",
     "stars": 0,
     "go_package": "ghclone",
@@ -91,7 +103,7 @@
   {
     "owner": "d0x7",
     "name": "xiam.li",
-    "stars": 0,
+    "stars": 1,
     "desc": "Xiam.Li Go Registry",
     "go_package": "xiam-li",
     "alpha_release": true,
