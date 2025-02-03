@@ -29,6 +29,7 @@
     "owner": "d0x7",
     "name": "ghclone",
     "stars": 0,
+    "desc": "Cli util to clone whole github accounts or organizations",
     "go_package": "ghclone",
     "latest_tag": "1.1.0",
     "alpha_release": false,
@@ -41,6 +42,7 @@
     "owner": "d0x7",
     "name": "gitversion",
     "stars": 0,
+    "desc": "Cli util that parses the latest git tag and outputs a semver based on it (incl. +dirty if applicable and auto increasing patch for commits till last tag).",
     "go_package": "gitversion",
     "latest_tag": "1.0.0",
     "alpha_release": false,
@@ -52,11 +54,11 @@
   {
     "owner": "d0x7",
     "name": "protoc-gen-go-nats",
-    "stars": 3,
+    "stars": 5,
     "desc": "Protoc plugin for using Protobuf with NATS.io",
     "go_package": "go-nats",
     "go_install": "xiam.li/go-nats/cmd/protoc-gen-go-nats@latest",
-    "latest_tag": "0.1.3",
+    "latest_tag": "0.1.11",
     "alpha_release": true,
     "has_cli_app": true,
     "is_library": false,
@@ -100,6 +102,17 @@
     "is_library": true,
     "packages": null,
     "master_branch": "master"
+  },
+  {
+    "owner": "d0x7",
+    "name": "protonats",
+    "stars": 0,
+    "go_package": "protonats",
+    "alpha_release": true,
+    "has_cli_app": false,
+    "is_library": true,
+    "packages": null,
+    "master_branch": "main"
   },
   {
     "owner": "d0x7",
