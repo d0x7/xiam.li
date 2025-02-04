@@ -55,7 +55,7 @@
     "owner": "d0x7",
     "name": "go-protonats",
     "stars": 5,
-    "desc": "Protoc plugin for using Protobuf with NATS.io",
+    "desc": "Go Protoc plugin for using Protobuf with NATS.io",
     "go_package": "go-protonats",
     "go_install": "xiam.li/go-protonats/cmd/protoc-gen-go-nats@latest",
     "latest_tag": "0.1.12",
@@ -88,6 +88,19 @@
     "alpha_release": false,
     "has_cli_app": false,
     "is_library": true,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "java-protonats",
+    "stars": 0,
+    "desc": "Java Protoc plugin for using Protobuf with NATS.io",
+    "go_package": "java-nats",
+    "go_install": "xiam.li/java-protonats/cmd/protoc-gen-java-nats@latest",
+    "alpha_release": true,
+    "has_cli_app": true,
+    "is_library": false,
     "packages": null,
     "master_branch": "main"
   },
