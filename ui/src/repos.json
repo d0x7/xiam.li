@@ -108,6 +108,7 @@
     "name": "protonats",
     "stars": 0,
     "go_package": "protonats",
+    "latest_tag": "0.0.1",
     "alpha_release": true,
     "has_cli_app": false,
     "is_library": true,
