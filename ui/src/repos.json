@@ -18,7 +18,7 @@
     "stars": 1,
     "desc": "Go library to send logs to Graylog as GELF via TCP, UDP and HTTP",
     "go_package": "gelf",
-    "latest_tag": "1.3.1",
+    "latest_tag": "1.3.2",
     "alpha_release": false,
     "has_cli_app": false,
     "is_library": true,
@@ -54,7 +54,7 @@
   {
     "owner": "d0x7",
     "name": "go-protonats",
-    "stars": 5,
+    "stars": 6,
     "desc": "Go Protoc plugin for using Protobuf with NATS.io",
     "go_package": "go-protonats",
     "go_install": "xiam.li/go-protonats/cmd/protoc-gen-go-nats@latest",
@@ -119,12 +119,23 @@
   {
     "owner": "d0x7",
     "name": "protonats",
-    "stars": 0,
+    "stars": 1,
     "go_package": "protonats",
-    "latest_tag": "0.0.3",
+    "latest_tag": "0.0.4",
     "alpha_release": true,
     "has_cli_app": false,
     "is_library": true,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
+    "name": "protoc-gen-uuidhelper",
+    "stars": 0,
+    "go_package": "uuidhelper",
+    "alpha_release": true,
+    "has_cli_app": false,
+    "is_library": false,
     "packages": null,
     "master_branch": "main"
   },
