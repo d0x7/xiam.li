@@ -14,6 +14,18 @@
   },
   {
     "owner": "d0x7",
+    "name": "errnumer",
+    "stars": 0,
+    "desc": "Go Generate tool inspired by Enumer for ProtoNATS errors.",
+    "go_package": "errnumer",
+    "alpha_release": true,
+    "has_cli_app": true,
+    "is_library": false,
+    "packages": null,
+    "master_branch": "main"
+  },
+  {
+    "owner": "d0x7",
     "name": "go-gelf",
     "stars": 1,
     "desc": "Go library to send logs to Graylog as GELF via TCP, UDP and HTTP",
@@ -131,9 +143,10 @@
   {
     "owner": "d0x7",
     "name": "protoc-gen-uuidhelper",
-    "stars": 0,
+    "stars": 1,
+    "desc": "Protoc plugins for generating idiomatic UUID accessors in Go and Kotlin for Protobuf messages.",
     "go_package": "uuidhelper",
-    "latest_tag": "0.0.1",
+    "latest_tag": "0.2.2",
     "alpha_release": true,
     "has_cli_app": false,
     "is_library": false,
